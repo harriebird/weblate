@@ -86,6 +86,7 @@ from social_core.exceptions import (
 )
 from social_django.utils import load_backend, load_strategy
 from social_django.views import complete, disconnect
+from social_django.models import UserSocialAuth
 
 from weblate.accounts.avatar import get_avatar_image, get_fallback_avatar_url
 from weblate.accounts.forms import (
@@ -497,7 +498,10 @@ def user_remove(request: AuthenticatedHttpRequest):
             AuditLog.objects.create(
                 request.user, request, "removal-request", **request.GET
             )
-            return social_complete(request, "email")
+            print(f"[TEST] request.user: {request.user}")
+            social_user = UserSocialAuth.objects.get(user=request.user)
+            print(f"[TEST] social_user: {social_user}")
+            return social_complete(request, social_user.provider)
     else:
         confirm_form = PasswordConfirmForm(request)
 
@@ -1402,7 +1406,9 @@ def social_complete(request: AuthenticatedHttpRequest, backend: str):  # noqa: C
       confirmations by bots
     - Restores session from authid for some backends (see social_auth)
     """
+    print(f"[TEST] request.POST: {request.POST.keys()}")
     if "authid" in request.GET:
+        print(f"[TEST] authid: {request.GET['authid']}")
         try:
             session_key, ip_address = loads(
                 request.GET["authid"], max_age=600, salt="weblate.authid"
@@ -1419,6 +1425,7 @@ def social_complete(request: AuthenticatedHttpRequest, backend: str):  # noqa: C
         and "verification_code" in request.GET
         and "confirm" not in request.GET
     ):
+        print("[TEST] has tokens")
         return render(
             request,
             "accounts/token.html",
@@ -1428,6 +1435,10 @@ def social_complete(request: AuthenticatedHttpRequest, backend: str):  # noqa: C
                 "backend": backend,
             },
         )
+
+    if "email" in request.GET and backend != "email":
+        print("[TEST] with email but not email backend...")
+
     try:
         response = complete(request, backend)
     except InvalidEmail:

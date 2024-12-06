@@ -264,8 +264,8 @@ OTP_WEBAUTHN_ALLOWED_ORIGINS = [SITE_URL]
 OTP_WEBAUTHN_ALLOW_PASSWORDLESS_LOGIN = False
 OTP_WEBAUTHN_HELPER_CLASS = "weblate.accounts.utils.WeblateWebAuthnHelper"
 
-if "WEBLATE_NO_EMAIL_AUTH" not in os.environ:
-    AUTHENTICATION_BACKENDS += ("social_core.backends.email.EmailAuth",)
+# if "WEBLATE_NO_EMAIL_AUTH" not in os.environ:
+#     AUTHENTICATION_BACKENDS += ("social_core.backends.email.EmailAuth",)
 
 # GitHub auth
 SOCIAL_AUTH_GITHUB_KEY = get_env_str("WEBLATE_SOCIAL_AUTH_GITHUB_KEY")
@@ -368,6 +368,10 @@ if SOCIAL_AUTH_GOOGLE_OAUTH2_KEY:
     )
     AUTHENTICATION_BACKENDS += ("social_core.backends.google.GoogleOAuth2",)
 
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = "536384353839-a45upcu19f80d07rdtnoospo66anfm7n.apps.googleusercontent.com"
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = "GlPhGe2Cpm_eTmzrOBR793hm"
+AUTHENTICATION_BACKENDS += ("social_core.backends.google.GoogleOAuth2",)
 
 SOCIAL_AUTH_MUSICBRAINZ_KEY = get_env_str("WEBLATE_SOCIAL_AUTH_MUSICBRAINZ_KEY")
 if SOCIAL_AUTH_MUSICBRAINZ_KEY:
